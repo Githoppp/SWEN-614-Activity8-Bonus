@@ -55,7 +55,7 @@ jobs:
           db_password = "${{ secrets.DB_PASSWORD }}"
           aws_key_name = "${{ secrets.AWS_KEY_NAME }}"
           db_name = "${{ secrets.DB_NAME }}"
-          EOF
+EOF
 
       # Step 4: Initialize Terraform working directory
       - name: Terraform Init
