@@ -92,7 +92,7 @@ jobs:
 
       # Step 5: Terraform Destroy
       - name: Terraform Destroy
-        run: terraform destroy -auto-approve
+        run: terraform destroy -var-file="secrets.tfvars" -auto-approve
 
 
         
