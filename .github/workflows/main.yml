@@ -36,10 +36,10 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }} # Secret variable
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # Secret variable
           aws-region: ${{ vars.AWS_REGION }}  # Reference the repository variable
-          db_username:  ${{ secrets.db_username }}
-          db_password:  ${{ secrets.db_password }}
-          aws_key_name:  ${{ secrets.aws_key_name }}
-          db_name:  ${{ secrets.db_name }}
+          # db_username:  ${{ secrets.db_username }}
+          # db_password:  ${{ secrets.db_password }}
+          # aws_key_name:  ${{ secrets.aws_key_name }}
+          # db_name:  ${{ secrets.db_name }}
 
       # Step 3: Install Terraform
       - name: Setup Terraform
@@ -47,6 +47,15 @@ jobs:
         with:
           terraform_version: 1.1.9 # Specifies Terraform version to use
           terraform_wrapper: false
+      # Dynamically create secret.tfvars from GitHub Secrets
+      - name: Create secret.tfvars file
+        run: |
+          cat <<EOF > secret.tfvars
+          db_username = "${{ secrets.DB_USERNAME }}"
+          db_password = "${{ secrets.DB_PASSWORD }}"
+          aws_key_name = "${{ secrets.AWS_KEY_NAME }}"
+          db_name = "${{ secrets.DB_NAME }}"
+          EOF
 
       # Step 4: Initialize Terraform working directory
       - name: Terraform Init
@@ -54,13 +63,13 @@ jobs:
 
       # Step 5: Preview the infrastructure changes
       - name: Terraform Plan
-        run: terraform plan
-        #run: terraform plan -var-file="secrets.tfvars"
+        # run: terraform plan
+        run: terraform plan -var-file="secrets.tfvars"
 
       # Step 6: Apply the infrastructure changes
       - name: Terraform Apply
-        run: terraform apply -auto-approve
-        #run: terraform apply -var-file="secrets.tfvars" -auto-approve # Auto-approve flag skips manual confirmation
+        # run: terraform apply -auto-approve
+        run: terraform apply -var-file="secrets.tfvars" -auto-approve # Auto-approve flag skips manual confirmation
 
   # Terraform destroy
   terraform_destroy:
@@ -102,8 +111,8 @@ jobs:
 
       # Step 5: Terraform Destroy
       - name: Terraform Destroy
-        run: terraform destroy
-        #run: terraform destroy -var-file="secrets.tfvars" -auto-approve
+        # run: terraform destroy
+        run: terraform destroy -var-file="secrets.tfvars" -auto-approve
 
 
         
